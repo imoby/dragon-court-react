@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<title>{{pageTitle}} &bull; {{globals.sitename}}</title>
+
+	<meta charset="iso-8859-1">
+	
+	<!-- css begin -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Almendra+SC&family=Amarante&family=Buda:wght@300&family=Calligraffitti&family=Euphoria+Script&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/css/site.css">
+	<!-- css end -->
+	
+	<!-- js begin -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+	<script>
+	window.baseURL = "{{globals.base}}";
+	</script>
+	<script src="/js/site.js"></script>
+	<!-- js end -->
+	
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="manifest" href="/images/site.webmanifest">
+</head>
+<body>
+	<div id="fb-root"></div>
+	<div class="cover-container d-flex w-100 h-100 p-3 mx-100 flex-column">
+		<header class="masthead mb-auto">
+			<div class="inner">
+				<h3 class="masthead-brand">Dragon Court</h3>
+				<nav class="nav nav-masthead justify-content-center">
+					<a class="nav-link active" href="/">Main</a>
+					<a class="nav-link" href="/user/login/">Login</a>
+					<a class="nav-link" href="/user/register/">Register</a>
+				</nav>
+			</div>
+		</header>
+		<main role="main" class="inner cover">
+			<div class="row">
+				<div class="col-12 text-center">
+					<a href="#"><img src="/images/header_banner.png" alt=""></a>
+				</div>
+			</div>
+			
+			{{{body}}}
+		</main>
+	
+		<!-- Footer -->
+		<footer class="mastfoot mt-auto">
+			<p class="lead">Copyright &copy; {{globals.copyYear}} - All Rights Reserved - <a href="#">Dragon Court Mobile</a></p>
+			<div class="fb-like" data-href="https://www.facebook.com/DragonCourtMobile/" data-colorscheme="dark" data-layout="standard" data-action="like" data-size="large" data-show-faces="false" data-share="true"></div>
+			<p><a href="https://www.facebook.com/DragonCourtMobile/">DCMobile on FB</a></p>
+			<p><a href="mailto:jason.allen.oneal@gmail.com">jason dot allen dot oneal at gmail dot com</a></p>
+		</footer>
+		<!-- Footer -->
+	</div>
+</body>
+</html>

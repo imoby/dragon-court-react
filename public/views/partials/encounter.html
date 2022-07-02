@@ -1,0 +1,52 @@
+<div style="background-color: #0a2200;color:#fff;height:100%">
+	<div class="row">
+		<div class="col-4">
+		 <img src="{{{image}}}">
+		</div>
+		<div class="col-8">
+		 <h5>Quest</h5>
+		 <div class="row">
+	   <div class="col-12 text-center">
+	    <strong>{{creature.name}}</strong>
+	   </div>
+	  </div>
+	  <div class="row">
+	   <div class="col-12 text-center">
+	    Guts: <span id="encounterCreatureGuts">{{creature.guts}}</span>
+	   </div>
+	  </div>
+	  <div class="row">
+	   <div class="col-12 text-center">
+	    Wits: <span id="encounterCreatureWits">{{creature.wits}}</span>
+	   </div>
+	  </div>
+	  <div class="row">
+	   <div class="col-12 text-center">
+	    &nbsp;
+	   </div>
+	  </div>
+	  <div class="row">
+	   <div class="col-12 text-center">
+	    <input type="button" name="attack" id="encounterAttack" value="{{attackStr}}">
+	   </div>
+	  </div>
+	  <div class="row">
+	   <div class="col-12 text-center">
+	    <input type="button" name="flee" id="encounterFlee" value="{{fleeStr}}">
+	   </div>
+	  </div>
+	  {{#if hasOpts}}
+	  <div class="row">
+	   <div class="col-12 text-center">
+	    {{{options}}}
+	   </div>
+	  </div>
+	  {{/if}}
+		</div>
+	</div>
+	<div class="row">
+	 <div class="col-12">
+	  <p>{{blurb}}</p>
+	 </div>
+	</div>
+</div>

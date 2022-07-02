@@ -1,0 +1,96 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="manifest" href="/images/site.webmanifest">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+ <link href="https://fonts.googleapis.com/css2?family=Almendra+SC&family=Amarante&family=Buda:wght@300&family=Calligraffitti&family=Euphoria+Script&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/css/game.css" type="text/css" media="all">
+	<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+	
+ <script>
+ var DC = {};
+ </script>
+ 
+ <script>
+ DC.init = () => {
+  DC.Tpl = new Tpl();
+  
+  new Ajax('api/game/init', {}, (data) => {
+   DC.User = new User({id: {{User.id}}, name: "{{User.name}}", email: "{{User.email}}", hasChar: {{User.hasChar}}, firstRun: {{User.firstRun}}, chat: "{{User.chat}}"});
+   DC.Player = new Player({
+    owner: parseInt({{Player.owner}}),
+    rankString: '{{Player.rankString}}',
+    nameAndRank: '{{Player.nameRankString}}',
+    region: '{{Player.region}}',
+    charclass: '{{Player.charClass}}',
+    background: "{{Player.background}}",
+    guild: {{Player.guild}},
+    effects: '{{Player.effects}}',
+    stats: { 
+     guts: {{Player.stats.guts}},
+     gutsMax: {{Player.stats.gutsMax}},
+     wits: {{Player.stats.wits}},
+     witsMax: {{Player.stats.witsMax}},
+     charm: {{Player.stats.charm}},
+     charmMax: {{Player.stats.charmMax}},
+     attack: {{Player.stats.attack}},
+     defend: {{Player.stats.defend}},
+     skill: {{Player.stats.skill}}
+    },
+    skills: { 
+     fighter: { 
+      skill: {{Player.skills.fighter.skill}},
+      max: {{Player.skills.fighter.max}}
+     },
+     magic: {
+      skill: {{Player.skills.magic.skill}},
+      max: {{Player.skills.magic.max}}
+     },
+     trade: { 
+      skill: {{Player.skills.trade.skill}},
+      max: {{Player.skills.trade.max}}
+     }
+    },
+    level: {{Player.level}},
+    experience: {{Player.experience}},
+    quests: {{Player.quests}},
+    questsMax: {{Player.questsMax}},
+    cash: {{Player.cash}},
+    rank: {{Player.rank}},
+    storage: {{Player.storage}},
+    storageMax: {{Player.storageMax}},
+    fame: {{Player.fame}},
+    favor: {{Player.favor}},
+    skilled: {{Player.skilled}}
+   });
+   
+   DC.Game = new Game();
+   DC.Chat = new Chat();
+  });
+ };
+ document.addEventListener('DOMContentLoaded', () => {
+ $(document).on('touchstart', '.chatDiv', handleTouchStart);
+ $(document).on('touchmove', '.chatDiv', handleTouchMove);
+}, false);
+$(document).ready(function(){
+ fbInit(document, 'script', 'facebook-jssdk');
+ DC.init();
+});
+ </script>
+</head>
+<body>
+ <div id="loading"></div>
+ <div class="container-fluid mt-auto h-100">
+  {{{body}}}
+ </div>
+</body>
+</html>

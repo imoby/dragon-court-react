@@ -1,0 +1,44 @@
+<!-- Game Area -->
+<div class="row">
+	<div class="col">
+		<!-- small screens -->
+		<div class="d-block d-md-none">
+			<!-- chat area -->
+			<div class="chatDiv">
+				<ul class="chatHistory"></ul>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<!-- game area -->
+					<div class="gameDiv"></div>
+					<div class="statBar"></div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- larger screens -->
+		<div class="d-none d-md-block">
+			<div class="row">
+				<div class="col-8">
+					<!-- game area -->
+					<div class="gameDiv"></div>
+					<div class="statBar"></div>
+				</div>
+				<div class="col-4">
+					<!-- chat area -->
+					<div class="chatDiv">
+						<div class="btn-group" role="group" aria-label="Chat Room">
+							<button type="button" data-type="global" class="btn btn-secondary chatSelect">Global</button>
+							<button type="button" data-type="guild" class="btn btn-secondary chatSelect">Guild</button>
+							<button type="button" data-type="region" class="btn btn-secondary chatSelect">Region</button>
+						</div>
+						<ul class="chatHistory"></ul>
+						<div class="chatMsgInput">
+							<input type="text" name="chatInput"><input type="button" class="chatSubmit" name="chatSubmit" value="Chat">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

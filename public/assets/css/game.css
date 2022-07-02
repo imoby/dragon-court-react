@@ -1,0 +1,19 @@
+html {
+	height: 100%;
+}
+
+body {
+	margin: 0 auto!important;
+	background-color: #448b37!important;
+	height: 100%;
+}
+
+h1,
+h2,
+h3 {
+	font-family: "Almendra SC", serif!important;
+}
+
+h2 {
+	font-size: 2em;
+}
