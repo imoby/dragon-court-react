@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Almendra+SC&family=Amarante&family=Buda:wght@300&family=Calligraffitti&family=Euphoria+Script&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/css/game.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="manifest" href="/images/site.webmanifest">
+	<script>
+		window.User = {
+			id: {{User.id}},
+			name: "{{User.name}}",
+			email: "{{User.email}}",
+			firstRun: {{User.firstRun}},
+			hasChar: {{User.hasChar}},
+			chat: {{User.chat}},
+			token: "{{User.token}}"
+		};
+		</script>
+</head>
+<body>
+<div id="container" class="container"></div>
+<script type="module" src='/js/creation-entry.js'></script>
+</body>
+</html>

@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `skill` int(20) NOT NULL,
   `cost` int(20) NOT NULL,
   `func` varchar(255) NOT NULL,
-  `equipable` int(1) NOT NULL,
+  `equippable` int(1) NOT NULL,
   `lvl` int(20) NOT NULL,
   `max_enchants` int(20) NOT NULL,
   `drop_rate` int(20) NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 TRUNCATE TABLE `items`;
 
-INSERT INTO `items` (`id`, `name`, `region`, `shop`, `guts`, `wits`, `charm`, `attack`, `defend`, `skill`, `cost`, `func`, `equipable`, `lvl`, `max_enchants`, `drop_rate`, `is_silver`, `is_crystal`) VALUES
+INSERT INTO `items` (`id`, `name`, `region`, `shop`, `guts`, `wits`, `charm`, `attack`, `defend`, `skill`, `cost`, `func`, `equippable`, `lvl`, `max_enchants`, `drop_rate`, `is_silver`, `is_crystal`) VALUES
 (1, 'Food', 'town', 'trade', 0, 0, 0, 0, 0, 0, 2, 'Heal:4', 0, 1, 0, 5, 0, 0),
 (2, 'Torch', 'town', 'trade', 0, 0, 0, 0, 0, 0, 5, 'Region:Mounds,Region:Dungeon', 0, 1, 0, 5, 0, 0),
 (3, 'Rope', 'town', 'trade', 0, 0, 0, 0, 0, 0, 8, 'Region:Mountains', 0, 1, 0, 5, 0, 0),

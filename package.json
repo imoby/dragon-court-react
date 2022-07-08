@@ -6,10 +6,12 @@
 		"prebuild:server": "rimraf dist",
 		"build:server": "babel ./src/server --out-dir dist/server",
 		"prebuild:client:site": "rimraf public/assets/js/site.js; rimraf public/assets/js/site.js.map",
-		"build:client:site": "node --max-old-space-size=8192 node_modules/rollup/dist/bin/rollup -c site.rollup.config.js",
+		"build:client:site": "rollup -c site.rollup.config.js",
+		"prebuild:client:creation": "rimraf public/assets/js/entry-creation.js",
+		"build:client:creation": "rollup -c creation.rollup.config.js",
 		"prebuild:client:game": "rimraf public/assets/js/entry.js",
 		"build:client:game": "node --max-old-space-size=8192 node_modules/rollup/dist/bin/rollup -c game.rollup.config.js",
-		"build:client": "npm-run-all build:client:site build:client:game",
+		"build:client": "npm-run-all build:client:site build:client:creation build:client:game",
 		"prebuild": "mysql -e 'source database.sql'",
 		"build": "npm-run-all build:server build:client run:dev",
 		"run:dev": "fuser -k 33039/tcp; nodemon dist/server/index.js"
@@ -37,7 +39,8 @@
 		"npm-run-all": "^4.1.5",
 		"phaser": "^3.55.2",
 		"socket.io": "^4.4.1",
-		"socket.io-client": "^4.5.1"
+		"socket.io-client": "^4.5.1",
+		"winston": "^3.8.1"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.17.10",

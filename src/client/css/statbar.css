@@ -1,0 +1,10 @@
+.statbar {
+  font-size: 0.8em;
+  margin-top: 0;
+  padding: 0.4em;
+  border: solid #000 1px;
+}
+
+.character-button {
+  padding: 0.1em;
+}

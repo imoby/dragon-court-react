@@ -1,0 +1,10 @@
+.item-table-container {
+  height: 18em;
+  max-height: 18em;
+  overflow-y: scroll;
+}
+
+table {
+  height: 18em;
+  color: #ffffff !important;
+}

@@ -1,0 +1,35 @@
+.region {
+  height: 100%;
+}
+
+.castle {
+  background-color: #f3a1bc;
+}
+
+.fields {
+  background-color: #fa898c;
+}
+
+.forest {
+  background-color: #007c1f;
+}
+
+.market {
+  background-color: #f3a1bc;
+}
+
+.mounds {
+  background-color: #935300;
+}
+
+.mountains {
+  background-color: #999999;
+}
+
+.sea {
+  background-color: #c3e1e4;
+}
+
+.town {
+  background-color: #00c79f;
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 let socket = io(`http://23.234.250.103:33039`);
 
 import Container from "react-bootstrap/Container";
@@ -11,31 +11,40 @@ import Display from "./game/display";
 import "./css/game.css";
 
 class Game extends React.Component<any, any> {
-	constructor(props: any){
-		super(props);
+  constructor(props: any) {
+    super(props);
 
-		this.state = {
-			data: {}
-		}
-	}
+    this.state = {
+      data: {},
+    };
+  }
 
-	render() {
-		return (
-			<Container fluid className="mt-auto h-100">
-				<Row>
-					<Col>
-						<div className="d-block d-md-none">
-							<Display size="small" socket={socket} />
-						</div>
+  async request(target: string, input: any): Promise<any> {
+    socket.emit(target, input);
+    await new Promise((resolve) => {
+      socket.on(target + "-response", (data) => {
+        resolve(data);
+      });
+    });
+  }
 
-						<div className="d-none d-md-block">
-							<Display size="large" socket={socket} />
-						</div>
-					</Col>
-				</Row>
-			</Container>
-		)
-	}
+  render() {
+    return (
+      <Container fluid className="mt-auto h-100">
+        <Row>
+          <Col>
+            <div className="d-block d-md-none">
+              <Display request={this.request} size="small" socket={socket} />
+            </div>
+
+            <div className="d-none d-md-block">
+              <Display request={this.request} size="large" socket={socket} />
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
 }
 
 export default Game;

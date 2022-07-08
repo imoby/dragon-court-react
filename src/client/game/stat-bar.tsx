@@ -1,140 +1,115 @@
 import React from "react";
+import { Socket } from "socket.io-client";
 
-import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
+import "../css/statbar.css";
+
 type Props = {
-	User: DC.User;
-	Player: DC.Player;
-}
+  User: DC.User;
+  Player: DC.Player;
+  exitGame: () => void;
+  characterPage: () => void;
+};
 
-class StatBar extends React.Component<Props, any> {
-	constructor(props: Props) {
-		super(props);
+type State = {
+  nameAndRank: string;
+  experience: number;
+  cash: number;
+  guts: number | string;
+  wits: number | string;
+  charm: number | string;
+  quests: number | string;
+  level: number;
+};
 
-		this.state = {
-			nameAndRank: this.props.Player.nameAndRank,
-			experience: this.props.Player.experience,
-			cash: this.props.Player.cash,
-			guts: this.props.Player.stats.guts,
-			wits: this.props.Player.stats.wits,
-			charm: this.props.Player.stats.charm,
-			quests: this.props.Player.quests,
-			level: this.props.Player.level,
-		};
-	}
+class StatBar extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
 
-	render(): React.ReactNode {
-		return (
-			<Container>
-				<div className="d-block d-sm-none">
-					<Row className="h-100">
-						<Col className="col-10">
-							<Row>
-								<Col className="col-6">
-									<span className="statsNameAndRank">
-										{this.state.nameAndRank}
-									</span>
-								</Col>
-								<Col className="col-3">
-									XP:{" "}
-									<span className="statsExperience">
-										{this.state.experience}
-									</span>
-								</Col>
-								<Col className="col-3">
-									$<span className="statsCash">{this.state.cash}</span>
-								</Col>
-							</Row>
-							<Row>
-								<Col className="col-3">
-									Guts: <span className="statsGuts">{this.state.guts}</span>
-								</Col>
-								<Col className="col-3">
-									Wits: <span className="statsWits">{this.state.wits}</span>
-								</Col>
-								<Col className="col-3">
-									Charm: <span className="statsCharm">{this.state.charm}</span>
-								</Col>
-							</Row>
-							<Row>
-								<Col className="col-3">
-									Qsts: <span className="statsQuests">{this.state.quests}</span>
-								</Col>
-								<Col className="col-3">
-									Lvl: <span className="statsLevel">{this.state.level}</span>
-								</Col>
-								<Col className="col-6">
-									<span className="statsWeaponAndArmor">
-										Weapon &amp; Armor
-									</span>
-								</Col>
-							</Row>
-						</Col>
-						<Col className="col-1">
-							<Button variant="secondary" className="statBarButton">
-								Inv
-							</Button>
-						</Col>
-					</Row>
-				</div>
+    this.state = {
+      nameAndRank: this.props.Player.rankString + " " + this.props.User.name,
+      experience: this.props.Player.experience,
+      cash: this.props.Player.cash,
+      guts: this.props.Player.stats.guts,
+      wits: this.props.Player.stats.wits,
+      charm: this.props.Player.stats.charm,
+      quests: this.props.Player.quests,
+      level: this.props.Player.level,
+    };
+  }
 
-				<div className="d-none d-sm-block">
-					<Row className="h-100">
-						<Col className="col-11">
-							<Row>
-								<Col className="col-auto">
-									<span className="statsNameAndRank">
-										{this.state.nameAndRank}
-									</span>
-								</Col>
-								<Col className="col-2">
-									Exp:{" "}
-									<span className="statsExperience">
-										{this.state.experience}
-									</span>
-								</Col>
-								<Col className="col-1">
-									$<span className="statsCash">{this.state.cash}</span>
-								</Col>
-								<Col className="col-2">
-									Quests:{" "}
-									<span className="statsQuests">{this.state.quests}</span>
-								</Col>
-								<Col className="col-2">
-									Level: <span className="statsLevel">{this.state.level}</span>
-								</Col>
-							</Row>
-							<Row>
-								<Col className="col-3">
-									Guts: <span className="statsGuts">{this.state.guts}</span>
-								</Col>
-								<Col className="col-3">
-									Wits: <span className="statsWits">{this.state.wits}</span>
-								</Col>
-								<Col className="col-3">
-									Charm: <span className="statsCharm">{this.state.charm}</span>
-								</Col>
-								<Col className="col-auto">
-									<span className="statsWeaponAndArmor">
-										Weapon &amp; Armor
-									</span>
-								</Col>
-							</Row>
-							<Row></Row>
-						</Col>
-						<Col className="col-1">
-							<Button variant="secondary" className="statBarButton">
-								Inv
-							</Button>
-						</Col>
-					</Row>
-				</div>
-			</Container>
-		);
-	}
+  render(): React.ReactNode {
+    return (
+      <div>
+        {/* display for small screens */}
+        <div className="d-block d-sm-none statbar">
+          <Row>
+            <Col className="col-10">
+              <Row>
+                <Col className="col-6">{this.state.nameAndRank}</Col>
+                <Col className="col-3">XP: {this.state.experience}</Col>
+                <Col className="col-3">
+                  Cash: {"$"}
+                  {this.state.cash}
+                </Col>
+              </Row>
+              <Row>
+                <Col className="col-3">Guts: {this.state.guts}</Col>
+                <Col className="col-3">Wits: {this.state.wits}</Col>
+                <Col className="col-3">Charm: {this.state.charm}</Col>
+              </Row>
+              <Row>
+                <Col className="col-3">Qsts: {this.state.quests}</Col>
+                <Col className="col-3">Lvl: {this.state.level}</Col>
+                <Col className="col-6">{"Weapon & Armor"}</Col>
+              </Row>
+            </Col>
+            <Col className="col-1">
+              <Button variant="secondary" className="statBarButton">
+                Inv
+              </Button>
+            </Col>
+          </Row>
+        </div>
+
+        {/* display for large screens */}
+        <div className="d-none d-sm-block statbar">
+          <Row>
+            <Col>
+              <Row>
+                <Col className="col-4">{this.state.nameAndRank}</Col>
+                <Col className="col-2">Exp: {this.state.experience}</Col>
+                <Col className="col-2">
+                  Cash: {"$"}
+                  {this.state.cash}
+                </Col>
+                <Col className="col-2">Quests: {this.state.quests}</Col>
+                <Col className="col-2">Level: {this.state.level}</Col>
+              </Row>
+              <Row>
+                <Col className="col-3">Guts: {this.state.guts}</Col>
+                <Col className="col-3">Wits: {this.state.wits}</Col>
+                <Col className="col-3">Charm: {this.state.charm}</Col>
+                <Col className="col-3">{"Weapon & Armor"}</Col>
+              </Row>
+            </Col>
+            <Col className="col-1 me-3">
+              <Button
+                className="character-button"
+                variant="dark"
+                onClick={this.props.characterPage}
+              >
+                <img src={"/images/dragon-head-small.png"} />
+              </Button>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default StatBar;
