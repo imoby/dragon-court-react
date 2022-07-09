@@ -124,7 +124,7 @@ export default class Character extends React.Component<Props, State> {
         <Row>
           <Col className="col-5">
             <Row>
-              <Col className="item-table-container">
+              <Col className="character-item-table-container">
                 <PlayerItems
                   User={this.state.User}
                   Player={this.state.Player}

@@ -23,20 +23,36 @@ export default class ListItem extends React.Component<Props, State> {
     };
   }
 
+  showAttack() {
+    if (this.state.item.attack == 0) {
+      return "";
+    } else {
+      if (this.state.item.attack) {
+        return `+${this.state.item.attack}a`;
+      } else {
+        return `${this.state.item.attack}a`;
+      }
+    }
+  }
+
+  showDefend() {
+    if (this.state.item.defend == 0) {
+      return "";
+    } else {
+      if (this.state.item.defend) {
+        return `+${this.state.item.defend}d`;
+      } else {
+        return `${this.state.item.defend}d`;
+      }
+    }
+  }
+
   render(): React.ReactNode {
     return (
       <tr onClick={() => this.props.onClick(this.state.item)}>
         <td>{this.state.item.name}</td>
-        <td>
-          {this.state.item.attack && (
-            <Col className="col-2">+{this.state.item.attack}a</Col>
-          )}
-        </td>
-        <td>
-          {this.state.item.defend && (
-            <Col className="col-2">+{this.state.item.defend}d</Col>
-          )}
-        </td>
+        <td>{this.showAttack()}</td>
+        <td>{this.showDefend()}</td>
         <td>{`${this.state.item.cost}`}</td>
       </tr>
     );
