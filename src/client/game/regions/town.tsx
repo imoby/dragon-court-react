@@ -44,7 +44,7 @@ class Town extends React.Component<Props, any> {
             onClick={() => this.props.regionChange("market")}
           />
           <RegionNode
-            title={"Castle Gate"}
+            title={"Castle Gate [1]"}
             img={"regions/castle_gate"}
             onClick={() => this.props.regionChange("castle")}
           />

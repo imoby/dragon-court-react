@@ -30,19 +30,21 @@ class Game extends React.Component<any, any> {
 
   render() {
     return (
-      <Container fluid className="mt-auto h-100">
-        <Row>
-          <Col>
-            <div className="d-block d-md-none">
-              <Display request={this.request} size="small" socket={socket} />
-            </div>
+      <React.StrictMode>
+        <Container fluid className="mt-auto h-100">
+          <Row>
+            <Col>
+              <div className="d-block d-md-none">
+                <Display request={this.request} size="small" socket={socket} />
+              </div>
 
-            <div className="d-none d-md-block">
-              <Display request={this.request} size="large" socket={socket} />
-            </div>
-          </Col>
-        </Row>
-      </Container>
+              <div className="d-none d-md-block">
+                <Display request={this.request} size="large" socket={socket} />
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </React.StrictMode>
     );
   }
 }

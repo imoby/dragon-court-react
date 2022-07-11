@@ -17,7 +17,7 @@ type Props = {
   exitGame: () => void;
   regionChange: (region: string) => void;
   enterBuilding: (type: string) => void;
-  performQuest: (region: string, type: string) => void;
+  performQuest: (region: string) => void;
 };
 
 type State = {
@@ -80,6 +80,7 @@ class Region extends React.Component<Props, State> {
             regionChange={this.props.regionChange}
             enterBuilding={this.props.enterBuilding}
             exitGame={this.props.exitGame}
+            performQuest={this.props.performQuest}
           />
         );
         break;

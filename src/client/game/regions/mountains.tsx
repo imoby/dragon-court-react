@@ -13,7 +13,7 @@ type Props = {
   Player: DC.Player;
   regionChange: (region: string) => void;
   enterBuilding: (type: string) => void;
-  performQuest: (region: string, type: string) => void;
+  performQuest: (region: string) => void;
   exitGame: () => void;
 };
 
@@ -48,9 +48,9 @@ class Mountains extends React.Component<Props, State> {
             onClick={() => this.props.enterBuilding("magic")}
           />
           <RegionNode
-            title={"Quest"}
+            title={"Quest (1)"}
             img={"mountains_quest"}
-            onClick={() => this.props.performQuest("mountains", "normal")}
+            onClick={() => this.props.performQuest("mountains")}
           />
           <RegionNode
             title={"Gem Exchange"}
@@ -68,12 +68,12 @@ class Mountains extends React.Component<Props, State> {
             onClick={this.props.exitGame}
           />
           <RegionNode
-            title={"Abandoned Mine"}
+            title={"Abandoned Mine (1)"}
             img={"mountains_mine"}
-            onClick={() => this.props.performQuest("mountains", "dragon")}
+            onClick={() => this.props.performQuest("mine")}
           />
           <RegionNode
-            title={"Forest Trail"}
+            title={"Forest Trail [1]"}
             img={"regions/mountains_to_forest"}
             onClick={() => this.props.regionChange("forest")}
           />

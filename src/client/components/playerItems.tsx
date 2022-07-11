@@ -29,7 +29,7 @@ export default class PlayerItems extends React.Component<Props, State> {
 
   render(): React.ReactNode {
     return (
-      <Table className="characterItems">
+      <Table className="characterItems" striped hover>
         <thead>
           <tr>
             <th>Name</th>
@@ -37,13 +37,14 @@ export default class PlayerItems extends React.Component<Props, State> {
           </tr>
         </thead>
         <tbody>
-          {this.state.items.map((item: any) => (
-            <ListItem
-              key={item.id}
-              item={item}
-              onClick={this.props.itemClick}
-            />
-          ))}
+          {this.state.items &&
+            this.state.items.map((item: DC.InventoryItem) => (
+              <ListItem
+                key={`${item.id}-${item.id}`}
+                item={item}
+                onClick={this.props.itemClick}
+              />
+            ))}
         </tbody>
       </Table>
     );

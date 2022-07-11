@@ -38,23 +38,6 @@ export default class Character extends React.Component<Props, State> {
   }
 
   render(): React.ReactNode {
-    const equipment: DC.equipment = {};
-    if (this.state.Player.equipmentStrings.head !== "") {
-      equipment.head = JSON.parse(this.state.Player.equipmentStrings.head);
-    }
-    if (this.state.Player.equipmentStrings.body !== "") {
-      equipment.body = JSON.parse(this.state.Player.equipmentStrings.body);
-    }
-    if (this.state.Player.equipmentStrings.feet !== "") {
-      equipment.feet = JSON.parse(this.state.Player.equipmentStrings.feet);
-    }
-    if (this.state.Player.equipmentStrings.left !== "") {
-      equipment.left = JSON.parse(this.state.Player.equipmentStrings.left);
-    }
-    if (this.state.Player.equipmentStrings.right !== "") {
-      equipment.right = JSON.parse(this.state.Player.equipmentStrings.right);
-    }
-
     const nextLvlExp = Math.round(
       50 * Math.pow(1.3999999761581421, this.props.Player.level - 1)
     );
@@ -138,8 +121,8 @@ export default class Character extends React.Component<Props, State> {
             </Row>
             <Row>
               <Col>
-                Backpack: {this.state.Player.storage}/
-                {this.state.Player.storageMax}
+                Backpack: {this.state.Player.backpack}/
+                {this.state.Player.backpackMax}
               </Col>
             </Row>
           </Col>
@@ -149,32 +132,46 @@ export default class Character extends React.Component<Props, State> {
                 <Row>
                   <Col>
                     H:
-                    {equipment.head !== undefined && `${equipment.head}`}
-                    {equipment.head == undefined && `None`}
+                    {Object.keys(this.state.Player.equipment.head).length !==
+                      0 && `${this.state.Player.equipment.head}`}
+                    {Object.keys(this.state.Player.equipment.head).length ===
+                      0 && `None`}
                   </Col>
                 </Row>
                 <Row>
                   <Col>
-                    B: {equipment.body !== undefined && `${equipment.body}`}
-                    {equipment.body == undefined && `None`}
+                    B:{" "}
+                    {Object.keys(this.state.Player.equipment.body).length !==
+                      0 && `${this.state.Player.equipment.body}`}
+                    {Object.keys(this.state.Player.equipment.body).length ===
+                      0 && `None`}
                   </Col>
                 </Row>
                 <Row>
                   <Col>
-                    F: {equipment.feet !== undefined && `${equipment.feet}`}
-                    {equipment.feet == undefined && `None`}
+                    F:{" "}
+                    {Object.keys(this.state.Player.equipment.feet).length !==
+                      0 && `${this.state.Player.equipment.feet}`}
+                    {Object.keys(this.state.Player.equipment.feet).length ===
+                      0 && `None`}
                   </Col>
                 </Row>
                 <Row>
                   <Col>
-                    R: {equipment.right !== undefined && `${equipment.right}`}
-                    {equipment.right == undefined && `None`}
+                    R:{" "}
+                    {Object.keys(this.state.Player.equipment.right).length !==
+                      0 && `${this.state.Player.equipment.right}`}
+                    {Object.keys(this.state.Player.equipment.right).length ===
+                      0 && `None`}
                   </Col>
                 </Row>
                 <Row>
                   <Col>
-                    L: {equipment.left !== undefined && `${equipment.left}`}
-                    {equipment.left == undefined && `None`}
+                    L:{" "}
+                    {Object.keys(this.state.Player.equipment.left).length !==
+                      0 && `${this.state.Player.equipment.left}`}
+                    {Object.keys(this.state.Player.equipment.left).length ===
+                      0 && `None`}
                   </Col>
                 </Row>
               </Col>

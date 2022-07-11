@@ -17,8 +17,6 @@ class BaseRoutes {
         try {
           const data = await jwt.verify(token, this.app.config.secret);
 
-          const items = await this.app.services.shop.getItems();
-
           const user = await this.app.services.user.getUser(data.data);
 
           if (user.hasChar) {
@@ -26,8 +24,7 @@ class BaseRoutes {
 
             template = "game-main";
             params.title = "Play " + req.app.locals.globals.sitename;
-            params.Player = player;
-            params.Items = items;
+            params.Player = player.data;
             params.layout = "game";
             params.layout = "game";
           } else {
@@ -41,6 +38,7 @@ class BaseRoutes {
 
           res.render(template, params);
         } catch (err) {
+          console.log(err);
           res.redirect("/user/login/");
         }
       }

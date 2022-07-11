@@ -13,7 +13,7 @@ type Props = {
   Player: DC.Player;
   regionChange: (region: string) => void;
   enterBuilding: (type: string) => void;
-  performQuest: (region: string, type: string) => void;
+  performQuest: (region: string) => void;
   exitGame: () => void;
 };
 
@@ -43,14 +43,14 @@ class Mounds extends React.Component<Props, State> {
         </Row>
         <Row>
           <RegionNode
-            title={"To Fields"}
+            title={"To Fields [1]"}
             img={"regions/mounds_to_fields"}
             onClick={() => this.props.regionChange("fields")}
           />
           <RegionNode
-            title={"Dark Vortex"}
+            title={">>Dark Vortex<<"}
             img={"dark_vortex"}
-            onClick={() => this.props.performQuest("mounds", "vortex")}
+            onClick={() => this.props.performQuest("vortex")}
           />
           <RegionNode
             title={"Gobble Inn"}
@@ -63,19 +63,19 @@ class Mounds extends React.Component<Props, State> {
         </Row>
         <Row>
           <RegionNode
-            title={"Throne Room"}
+            title={"Throne Room (1)"}
             img={"throne_room"}
-            onClick={() => this.props.performQuest("mounds", "throne")}
+            onClick={() => this.props.performQuest("throne")}
           />
           <RegionNode
-            title={"Warrens"}
+            title={"Warrens (1)"}
             img={"warrens"}
-            onClick={() => this.props.performQuest("mounds", "warrens")}
+            onClick={() => this.props.performQuest("warrens")}
           />
           <RegionNode
-            title={"Treasury"}
+            title={"Treasury (1)"}
             img={"treasury"}
-            onClick={() => this.props.performQuest("mounds", "treasury")}
+            onClick={() => this.props.performQuest("treasury")}
           />
         </Row>
       </div>

@@ -14,6 +14,7 @@ type Props = {
   regionChange: (region: string) => void;
   enterBuilding: (type: string) => void;
   exitGame: () => void;
+  performQuest: (region: string) => void;
 };
 
 type State = {
@@ -72,9 +73,9 @@ class Castle extends React.Component<Props, State> {
             onClick={() => this.props.enterBuilding("post_office")}
           />
           <RegionNode
-            title={"Dunjeons"}
+            title={"Dunjeons (1)"}
             img={"dungeons"}
-            onClick={() => this.props.regionChange("dungeon")}
+            onClick={() => this.props.performQuest("dungeon")}
           />
         </Row>
       </div>

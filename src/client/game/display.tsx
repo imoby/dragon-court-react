@@ -14,10 +14,10 @@ type Props = {
 };
 
 type State = {
-  User: DC.User;
-  Player: DC.Player;
-  Items: DC.Item[];
+  User: DC.User | null;
+  Player: DC.Player | null;
   inGame: boolean;
+  playerFetched: boolean;
 };
 
 class Display extends React.Component<Props, State> {
@@ -26,13 +26,24 @@ class Display extends React.Component<Props, State> {
 
     this.state = {
       User: window.User,
-      Player: window.Player,
-      Items: window.Items,
+      Player: null,
       inGame: false,
+      playerFetched: false,
     };
 
     this.exitGame = this.exitGame.bind(this);
     this.enterGame = this.enterGame.bind(this);
+
+    this.props.socket.emit("player-get", { pid: window.pid });
+  }
+
+  componentDidMount(): void {
+    this.props.socket.on("player-get-response", (data) => {
+      this.setState({
+        Player: data.data,
+        playerFetched: true,
+      });
+    });
   }
 
   exitGame() {}
@@ -44,48 +55,48 @@ class Display extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.props.size == "large") {
-      return (
-        <Row>
-          <Col className="ms-5">
-            <GameScreen
-              User={this.state.User}
-              Player={this.state.Player}
-              Items={this.state.Items}
-              socket={this.props.socket}
-              request={this.props.request}
-              exitGame={this.exitGame}
-              enterGame={this.enterGame}
-            />
-          </Col>
-          <Col md="4">
-            <Chat
-              User={this.state.User}
-              Player={this.state.Player}
-              inGame={this.state.inGame}
-            />
-          </Col>
-        </Row>
-      );
-    } else {
-      return (
-        <>
-          <div className="chatDiv"></div>
+    if (this.state.playerFetched) {
+      if (this.props.size == "large") {
+        return (
           <Row>
-            <Col sm="auto">
+            <Col className="ms-5">
               <GameScreen
                 User={this.state.User}
                 Player={this.state.Player}
-                Items={this.state.Items}
                 socket={this.props.socket}
                 request={this.props.request}
                 exitGame={this.exitGame}
                 enterGame={this.enterGame}
               />
             </Col>
+            <Col md="4">
+              <Chat
+                User={this.state.User}
+                Player={this.state.Player}
+                inGame={this.state.inGame}
+              />
+            </Col>
           </Row>
-        </>
-      );
+        );
+      } else {
+        return (
+          <>
+            <div className="chatDiv"></div>
+            <Row>
+              <Col sm="auto">
+                <GameScreen
+                  User={this.state.User}
+                  Player={this.state.Player}
+                  socket={this.props.socket}
+                  request={this.props.request}
+                  exitGame={this.exitGame}
+                  enterGame={this.enterGame}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      }
     }
   }
 }

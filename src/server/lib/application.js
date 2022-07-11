@@ -33,10 +33,9 @@ class Application {
     this.services = {
       user: require("./services/user")(this),
       player: require("./services/player")(this),
-      region: require("./services/region")(this),
       inventory: require("./services/inventory")(this),
       encounter: require("./services/encounter")(this),
-      shop: require("./services/shop")(this),
+      item: require("./services/item")(this),
       chat: require("./services/chat")(this),
     };
 
@@ -125,12 +124,16 @@ class Application {
     // controllers
     const userController = require("../controllers/user");
     const playerController = require("../controllers/player");
+    const encounterController = require("../controllers/encounter");
+    const buildingController = require("../controllers/building");
 
     this.io.on("connection", (socket) => {
       this.logger.info("user connected");
 
       userController.init(this, socket);
       playerController.init(this, socket);
+      encounterController.init(this, socket);
+      buildingController.init(this, socket);
     });
 
     this.expressApp.use((req, res, next) => {

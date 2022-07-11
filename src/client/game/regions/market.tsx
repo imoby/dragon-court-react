@@ -46,7 +46,7 @@ class Market extends React.Component<Props, State> {
             onClick={() => this.props.enterBuilding("armor")}
           />
           <RegionNode
-            title={"Hire Boat"}
+            title={"Hire Boat [1]"}
             img={"regions/sea"}
             onClick={() => this.props.regionChange("sea")}
           />

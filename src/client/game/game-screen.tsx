@@ -10,11 +10,11 @@ import Region from "./region";
 import StatBar from "./stat-bar";
 import Building from "./building";
 import Character from "./character";
+import Encounter from "./encounter";
 
 type Props = {
   User: DC.User;
   Player: DC.Player;
-  Items: DC.Item[];
   socket: Socket;
   request: (target: string, input: any) => Promise<any>;
   exitGame: () => void;
@@ -28,12 +28,16 @@ type State = {
   building: string;
   inCharacterPage: boolean;
   inEncounter: boolean;
+  creature: DC.Creature | null;
   firstPlay: boolean;
   transactionType: string;
   selectedItem: DC.InventoryItem | DC.Item | null;
+  inWelcome: boolean;
 };
 
 class GameScreen extends React.Component<Props, State> {
+  inWelcome: boolean;
+
   constructor(props: any) {
     super(props);
 
@@ -53,17 +57,25 @@ class GameScreen extends React.Component<Props, State> {
     this.transactionTypeChange = this.transactionTypeChange.bind(this);
     this.performTrade = this.performTrade.bind(this);
     this.update = this.update.bind(this);
+    this.exitCharacter = this.exitCharacter.bind(this);
+    this.inventoryItemUse = this.inventoryItemUse.bind(this);
+    this.inventoryItemInfo = this.inventoryItemInfo.bind(this);
+
+    const p = this.props.Player;
+    p.nameAndRank = this.props.Player.rankString + " " + this.props.User.name;
 
     this.state = {
       inBuilding: false,
       building: "",
       inCharacterPage: false,
       inEncounter: false,
+      creature: null,
       User: this.props.User,
-      Player: this.props.Player,
+      Player: p,
       firstPlay: true,
       transactionType: "buy",
       selectedItem: null,
+      inWelcome: true,
     };
   }
 
@@ -71,19 +83,94 @@ class GameScreen extends React.Component<Props, State> {
     this.props.socket.emit("player-update", this.state.Player);
   }
 
+  componentDidMount(): void {
+    this.props.socket.on("player-update-response", (data: any) => {
+      if (data.status == "ok") {
+        if (data.action === "purchased") {
+          template.modal(
+            "shop-success",
+            "Success!",
+            "You have purchased `" + this.state.selectedItem.name + "`."
+          );
+        } else if (data.action === "sold") {
+          template.modal(
+            "shop-success",
+            "Success!",
+            "You have sold `" + this.state.selectedItem.name + "`."
+          );
+        } else if (data.action === "equipped") {
+          template.modal(
+            "inventory-success",
+            "Success!",
+            "You have equipped `" + this.state.selectedItem.name + "`."
+          );
+        } else if (data.action === "identified") {
+          template.modal(
+            "shop-success",
+            "Success!",
+            "You have identified `" + this.state.selectedItem.name + "`."
+          );
+        }
+
+        this.setState({
+          Player: data.data,
+          selectedItem: null,
+        });
+      } else {
+        template.modal("update-error", "Ooops!", data.data);
+      }
+    });
+
+    this.props.socket.on("quest-init-response", (data: any) => {
+      this.setState({
+        creature: data.creature,
+        inEncounter: true,
+      });
+    });
+  }
+
   characterPage() {
     this.setState({
       inCharacterPage: true,
     });
+    this.update();
   }
 
   regionChange(region: string) {
     const player = this.state.Player;
 
+    const newQuests = player.quests - 1;
+    switch (region) {
+      case "castle":
+        player.quests = newQuests;
+        break;
+
+      case "forest":
+        player.quests = newQuests;
+        break;
+
+      case "mounds":
+        player.quests = newQuests;
+        break;
+
+      case "mountains":
+        player.quests = newQuests;
+        break;
+
+      case "fields":
+        player.quests = newQuests;
+        break;
+
+      case "sea":
+        player.quests = newQuests;
+        break;
+    }
+
     player.region = region;
     this.setState({
       Player: player,
     });
+    this.update();
   }
 
   enterBuilding(type: string) {
@@ -91,6 +178,7 @@ class GameScreen extends React.Component<Props, State> {
       inBuilding: true,
       building: type,
     });
+    this.update();
   }
 
   exitBuilding() {
@@ -98,6 +186,7 @@ class GameScreen extends React.Component<Props, State> {
       inBuilding: false,
       building: "",
     });
+    this.update();
   }
 
   transactionTypeChange(event: any) {
@@ -111,19 +200,6 @@ class GameScreen extends React.Component<Props, State> {
     this.setState({
       selectedItem: item,
     });
-  }
-
-  findItem(inventory: any, id: number) {
-    return inventory.find((obj: any) => {
-      return obj.id === id || obj.itemId === id;
-    });
-  }
-
-  removeItem(inventory: DC.InventoryItem[], id: number) {
-    return inventory.splice(
-      inventory.findIndex((item: DC.InventoryItem) => item.itemId === id),
-      1
-    );
   }
 
   performTrade() {
@@ -147,75 +223,33 @@ class GameScreen extends React.Component<Props, State> {
 
         return false;
       } else {
-        const p = this.state.Player;
-        p.cash = p.cash - cost;
-        p.cashToday = p.cashToday - cost;
-
-        const itm = this.findItem(p.inventory, this.state.selectedItem.id);
-        if (itm) {
-          itm.qty = itm.qty + 1;
-          p.inventory = this.removeItem(p.inventory, itm.id);
-          p.inventory.push(itm);
-        } else {
-          p.inventory.push(itm);
-        }
-
-        this.setState({
-          Player: p,
-          selectedItem: null,
+        this.props.socket.emit("player-buy-item", {
+          player: this.state.Player,
+          item: this.state.selectedItem.id,
         });
       }
     }
 
     if (this.state.transactionType === "sell") {
-      const p = this.state.Player;
-      p.cash =
-        p.cash +
-        (this.state.selectedItem.cost - this.state.selectedItem.cost / 0.02);
-      p.cashToday =
-        p.cashToday +
-        (this.state.selectedItem.cost - this.state.selectedItem.cost / 0.02);
-
-      p.inventory = this.removeItem(p.inventory, this.state.selectedItem.id);
-
-      this.setState({
-        Player: p,
-        selectedItem: null,
+      this.props.socket.emit("player-sell-item", {
+        player: this.state.Player,
+        item: this.state.selectedItem.id,
       });
     }
-
-    this.update();
   }
 
-  polish() {}
+  polish() {
+    this.props.socket.emit("player-polish-item", {
+      player: this.state.Player,
+      item: this.state.selectedItem.item,
+    });
+  }
 
   identify() {
-    const itm = this.state.selectedItem as DC.InventoryItem;
-    if (itm.identified) {
-      return;
-    } else {
-      const p = this.state.Player;
-      p.cash = p.cash - 40;
-      p.cashToday = p.cashToday - 40;
-
-      const item = this.findItem(p.inventory, itm.id);
-      item.identified = 1;
-      item.identifiedName =
-        item.name +
-        (item.attack
-          ? " +" + item.attack + "a"
-          : item.attack > 0
-          ? " -" + item.attack + "a"
-          : "") +
-        (item.defend
-          ? " +" + item.defend + "d"
-          : item.defend > 0
-          ? " -" + item.defend + "d"
-          : "");
-
-      p.inventory = this.removeItem(p.inventory, itm.id);
-      p.inventory.push(item);
-    }
+    this.props.socket.emit("player-identify-item", {
+      player: this.state.Player,
+      item: this.state.selectedItem.item,
+    });
   }
 
   info() {}
@@ -228,12 +262,15 @@ class GameScreen extends React.Component<Props, State> {
 
   tithe() {}
 
-  performQuest(region: string, type: string) {}
+  performQuest(region: string) {
+    this.props.socket.emit("quest-init", { region: region });
+  }
 
   exitCharacter() {
     this.setState({
       inCharacterPage: false,
     });
+    this.update();
   }
 
   inventoryItemUse() {
@@ -244,6 +281,19 @@ class GameScreen extends React.Component<Props, State> {
         "You have not selected an item."
       );
       return false;
+    }
+
+    if (this.state.selectedItem.equippable) {
+      this.props.socket.emit("player-equip-item", {
+        player: this.state.Player,
+        item: this.state.selectedItem.id,
+      });
+    } else {
+      if (this.state.inEncounter) {
+        if (this.state.selectedItem.type === "battle") {
+        }
+      } else {
+      }
     }
   }
 
@@ -280,6 +330,7 @@ class GameScreen extends React.Component<Props, State> {
     this.setState({
       User: user,
       firstPlay: false,
+      inWelcome: false,
     });
 
     this.props.socket.emit("user-update", this.state.User);
@@ -290,15 +341,89 @@ class GameScreen extends React.Component<Props, State> {
   renderStatBar() {
     return (
       <StatBar
-        Player={this.props.Player}
-        User={this.props.User}
+        Player={this.state.Player}
+        User={this.state.User}
         exitGame={this.props.exitGame}
         characterPage={this.characterPage}
       />
     );
   }
 
-  renderGameScreen() {}
+  renderGameScreen() {
+    if (this.state.User.firstRun) {
+      return (
+        <WelcomeScreen
+          text={template.getText("awaken.first")}
+          goAdventuring={this.goAdventuring}
+        />
+      );
+    } else if (this.state.firstPlay) {
+      return (
+        <WelcomeScreen
+          text={template.awakenText(this.state.User, this.state.Player)}
+          goAdventuring={this.goAdventuring}
+        />
+      );
+    } else {
+      if (this.state.inBuilding) {
+        return (
+          <Building
+            type={this.state.building}
+            User={this.state.User}
+            Player={this.state.Player}
+            socket={this.props.socket}
+            exitBuilding={this.exitBuilding}
+            performQuest={this.performQuest}
+            itemClick={this.itemClick}
+            selectedItem={this.state.selectedItem}
+            performTrade={this.performTrade}
+            polish={this.polish}
+            identify={this.identify}
+            info={this.identify}
+            rest={this.rest}
+            rumor={this.rumor}
+            transactionType={this.state.transactionType}
+            transactionTypeChange={this.transactionTypeChange}
+            heal={this.heal}
+            tithe={this.tithe}
+          />
+        );
+      } else if (this.state.inCharacterPage) {
+        return (
+          <Character
+            Player={this.props.Player}
+            User={this.props.User}
+            itemClick={this.itemClick}
+            selectedItem={this.state.selectedItem}
+            exitScreen={this.exitCharacter}
+            inventoryItemUse={this.inventoryItemUse}
+            inventoryItemInfo={this.inventoryItemInfo}
+            inventoryDump={this.inventoryDump}
+            inventoryRecover={this.inventoryRecover}
+            inventoryPeer={this.inventoryPeer}
+          />
+        );
+      } else if (this.state.inEncounter) {
+        return <Encounter creature={this.state.creature} />;
+      } else if (
+        !this.state.inBuilding &&
+        !this.state.inEncounter &&
+        !this.state.inCharacterPage
+      ) {
+        return (
+          <Region
+            Player={this.props.Player}
+            User={this.props.User}
+            socket={this.props.socket}
+            exitGame={this.props.exitGame}
+            regionChange={this.regionChange}
+            enterBuilding={this.enterBuilding}
+            performQuest={this.performQuest}
+          />
+        );
+      }
+    }
+  }
 
   render(): React.ReactNode {
     const screenSize = {
@@ -308,84 +433,13 @@ class GameScreen extends React.Component<Props, State> {
       marginRight: "1.2em",
       border: "1px solid black",
     };
-    if (this.state.User.firstRun) {
-      return (
-        <WelcomeScreen
-          screenSize={screenSize}
-          text={template.getText("awaken.first")}
-          goAdventuring={this.goAdventuring}
-        />
-      );
-    } else if (this.state.firstPlay) {
-      return (
-        <WelcomeScreen
-          screenSize={screenSize}
-          text={template.awakenText(this.state.User, this.state.Player)}
-          goAdventuring={this.goAdventuring}
-        />
-      );
-    } else {
-      return (
-        <div style={screenSize}>
-          <div style={{ height: "100%" }}>
-            {this.state.inBuilding && (
-              <Building
-                type={this.state.building}
-                Items={this.props.Items}
-                User={this.state.User}
-                Player={this.state.Player}
-                exitBuilding={this.exitBuilding}
-                performQuest={this.performQuest}
-                itemClick={this.itemClick}
-                selectedItem={this.state.selectedItem}
-                performTrade={this.performTrade}
-                polish={this.polish}
-                identify={this.identify}
-                info={this.identify}
-                rest={this.rest}
-                rumor={this.rumor}
-                transactionType={this.state.transactionType}
-                transactionTypeChange={this.transactionTypeChange}
-                heal={this.heal}
-                tithe={this.tithe}
-              />
-            )}
 
-            {this.state.inCharacterPage && (
-              <Character
-                Player={this.props.Player}
-                User={this.props.User}
-                itemClick={this.itemClick}
-                selectedItem={this.state.selectedItem}
-                exitScreen={this.exitCharacter}
-                inventoryItemUse={this.inventoryItemUse}
-                inventoryItemInfo={this.inventoryItemInfo}
-                inventoryDump={this.inventoryDump}
-                inventoryRecover={this.inventoryRecover}
-                inventoryPeer={this.inventoryPeer}
-              />
-            )}
-
-            {this.state.inEncounter && <div>Encounter</div>}
-
-            {!this.state.inBuilding &&
-              !this.state.inEncounter &&
-              !this.state.inCharacterPage && (
-                <Region
-                  Player={this.props.Player}
-                  User={this.props.User}
-                  socket={this.props.socket}
-                  exitGame={this.props.exitGame}
-                  regionChange={this.regionChange}
-                  enterBuilding={this.enterBuilding}
-                  performQuest={this.performQuest}
-                />
-              )}
-          </div>
-          <div>{this.renderStatBar()}</div>
-        </div>
-      );
-    }
+    return (
+      <div style={screenSize}>
+        <div style={{ height: "100%" }}>{this.renderGameScreen()}</div>
+        {!this.state.inWelcome && <div>{this.renderStatBar()}</div>}
+      </div>
+    );
   }
 }
 

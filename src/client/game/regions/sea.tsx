@@ -13,7 +13,7 @@ type Props = {
   Player: DC.Player;
   regionChange: (region: string) => void;
   enterBuilding: (type: string) => void;
-  performQuest: (region: string, type: string) => void;
+  performQuest: (region: string) => void;
 };
 
 type State = {
@@ -42,19 +42,19 @@ class Sea extends React.Component<Props, State> {
         </Row>
         <Row>
           <RegionNode
-            title={"Hie Brasil"}
+            title={"Hie Brasil (1)"}
             img={"regions/hie_brasil"}
-            onClick={() => this.props.performQuest("sea", "brasil")}
+            onClick={() => this.props.performQuest("brasil")}
           />
           <RegionNode
-            title={"Shangala"}
+            title={"Shangala (1)"}
             img={"regions/shangala"}
-            onClick={() => this.props.performQuest("sea", "shangala")}
+            onClick={() => this.props.performQuest("shangala")}
           />
           <RegionNode
-            title={"Azteca"}
+            title={"Azteca (1)"}
             img={"regions/azteca"}
-            onClick={() => this.props.performQuest("sea", "azteca")}
+            onClick={() => this.props.performQuest("azteca")}
           />
         </Row>
         <Row>
@@ -67,9 +67,9 @@ class Sea extends React.Component<Props, State> {
             onClick={() => this.props.regionChange("market")}
           />
           <RegionNode
-            title={"Go Fish"}
+            title={"Go Fish (1)"}
             img={"sea_quest"}
-            onClick={() => this.props.performQuest("sea", "normal")}
+            onClick={() => this.props.performQuest("sea")}
           />
           <RegionNode
             title={"Seaside Diner"}

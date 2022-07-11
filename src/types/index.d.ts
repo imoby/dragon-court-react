@@ -7,9 +7,8 @@ declare global {
   interface Window {
     baseURL: string;
     backstory: string;
+    pid: number;
     User: DC.User;
-    Player: DC.Player;
-    Items: any[];
     socket: Socket;
   }
 
@@ -67,8 +66,8 @@ declare global {
       questsMax: number;
       cash: number;
       rank: number;
-      storage: number;
-      storageMax: number;
+      backpack: number;
+      backpackMax: number;
       fame: number;
       favor: number;
       place: string;
@@ -95,13 +94,6 @@ declare global {
         left: DC.InventoryItem;
         right: DC.InventoryItem;
       };
-      equipmentStrings?: {
-        head: string;
-        body: string;
-        feet: string;
-        left: string;
-        right: string;
-      };
     }
 
     interface equipment {
@@ -112,20 +104,15 @@ declare global {
       right?: DC.InventoryItem;
     }
 
-    interface equipmentStrings {
-      head?: string;
-      body?: string;
-      feet?: string;
-      left?: string;
-      right?: string;
-    }
-
     interface Item {
       id: number;
-      item: number;
+      item?: number;
       name: string;
       region: string;
+      identified?: number;
       shop: string;
+      type: string;
+      location: string;
       guts: number;
       wits: number;
       charm: number;
@@ -140,15 +127,19 @@ declare global {
       dropRate: number;
       isSilver: number;
       isCrystal: number;
+      attributes: string;
     }
 
     interface InventoryItem {
-      id: number;
-      itemId: number;
+      id?: number;
+      lvl?: number;
+      item: number;
       name: string;
       identifiedName?: string;
       region: string;
       shop: string;
+      type: string;
+      location: string;
       baseGuts: number;
       baseWits: number;
       baseCharm: number;
@@ -175,6 +166,21 @@ declare global {
       inStorage: number;
       requiredLevel: number;
       itemLevel: number;
+      attributes: string;
+    }
+
+    interface Creature {
+      id: number;
+      name: string;
+      guts: number;
+      wits: number;
+      exp: number;
+      fame: number;
+      abilities: string;
+      options: string;
+      region: string;
+      items: string;
+      level: number;
     }
 
     interface Strings {

@@ -13,7 +13,7 @@ type Props = {
   Player: DC.Player;
   regionChange: (region: string) => void;
   enterBuilding: (type: string) => void;
-  performQuest: (region: string, type: string) => void;
+  performQuest: (region: string) => void;
   exitGame: () => void;
 };
 
@@ -49,7 +49,7 @@ class Fields extends React.Component<Props, State> {
           />
           {this.state.Player.level > 12 && (
             <RegionNode
-              title={"Goblin Mounds"}
+              title={"Goblin Mound (1)"}
               img={"regions/fields_to_mounds"}
               onClick={() => this.props.regionChange("mounds")}
             />
@@ -66,15 +66,15 @@ class Fields extends React.Component<Props, State> {
         <Row>
           {this.state.Player.level > 8 && (
             <RegionNode
-              title={"To Forest"}
+              title={"Forest Road [1]"}
               img={"regions/fields_to_forest"}
               onClick={() => this.props.regionChange("forest")}
             />
           )}
           <RegionNode
-            title={"Quest"}
+            title={"Quest (1)"}
             img={"fields_quest"}
-            onClick={() => this.props.performQuest("fields", "normal")}
+            onClick={() => this.props.performQuest("fields")}
           />
           <RegionNode
             title={"Exit Game"}

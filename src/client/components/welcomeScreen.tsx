@@ -7,11 +7,6 @@ import Col from "react-bootstrap/Col";
 import "../css/welcomeScreen.css";
 
 type Props = {
-  screenSize: {
-    height: string;
-    width: string;
-    marginTop: string;
-  };
   goAdventuring: () => void;
   text: string;
 };
@@ -23,7 +18,7 @@ export default class WelcomeScreen extends React.Component<Props, any> {
 
   render(): React.ReactNode {
     return (
-      <div style={this.props.screenSize} className="welcomeScreen">
+      <div className="welcomeScreen">
         <Row>
           <Col className="text-center">
             <p>{this.props.text}</p>

@@ -113,28 +113,70 @@ class PlayerService {
     return title;
   }
 
-  getEquipped(items, location) {
-    return items.find((obj) => {
-      return obj.func.toLowerCase().includes(location.toLowerCase());
-    });
-  }
-
   async getPlayer(id) {
     let json = {};
     const query = "SELECT * FROM players WHERE owner = ?";
     const results = await this.app.db.query(query, [id]);
     if (results.length > 0) {
-      const data = results[0];
+      const result = results[0];
+
+      const obj = {
+        id: result.id,
+        owner: result.owner,
+        region: result.region,
+        class: result.class,
+        background: result.background,
+        alliance: result.alliance,
+        effects: result.effects,
+        stats: {
+          guts: result.guts,
+          gutsMax: result.max_guts,
+          wits: result.wits,
+          witsMax: result.max_wits,
+          charm: result.charm,
+          charmMax: result.max_charm,
+          attack: result.attack,
+          defend: result.defend,
+          skill: result.skill,
+        },
+        skills: {
+          fighter: {
+            skill: result.skill_fighter,
+            max: result.skill_fighter_max,
+          },
+          magic: {
+            skill: result.skill_magic,
+            max: result.skill_magic_max,
+          },
+          trade: {
+            skill: result.skill_trade,
+            max: result.skill_trade_max,
+          },
+        },
+        level: result.level,
+        experience: result.experience,
+        quests: result.quests,
+        questsMax: result.max_quests,
+        cash: result.cash,
+        rank: result.rank,
+        backpack: result.storage,
+        backpackMax: result.max_storage,
+        fame: result.fame,
+        place: result.place,
+        location: result.location,
+      };
+
       let skilled = 0;
       let totalSkills = 0;
-      if (data.skill_fighter || data.skill_magic || data.skill_trade) {
+      if (result.skill_fighter || result.skill_magic || result.skill_trade) {
         skilled = 1;
-        totalSkills = data.skill_fighter + data.skill_magic + data.skill_trade;
+        totalSkills =
+          result.skill_fighter + result.skill_magic + result.skill_trade;
       }
-      data.skilled = skilled;
-      data.totalGuildSkills = totalSkills;
-      data.rankString = this.getRankString(data.rank);
-      data.inventory = await this.getInventory(id);
+      obj.skilled = skilled;
+      obj.totalGuildSkills = totalSkills;
+      obj.rankString = this.getRankString(result.rank);
+      obj.inventory = await this.app.services.inventory.getInventory(id);
 
       let guts = 0,
         wits = 0,
@@ -142,32 +184,26 @@ class PlayerService {
         attack = 0,
         defend = 0;
 
-      const equipment = await this.getEquipment(id);
-      for (const itm of equipment) {
-        guts += itm.guts;
-        wits += itm.wits;
-        charm += itm.charm;
-        attack += itm.attack;
-        defend += itm.defend;
+      const equipment = await this.app.services.inventory.getEquipment(id);
+      for (const [k, v] of Object.entries(equipment)) {
+        guts += v.guts !== null ? v.guts : 0;
+        wits += v.wits !== null ? v.wits : 0;
+        charm += v.charm !== null ? v.charm : 0;
+        attack += v.attack !== null ? v.attack : 0;
+        defend += v.defend !== null ? v.defend : 0;
       }
 
-      data.equipment = {
-        head: JSON.stringify(this.getEquipped(equipment, "head")),
-        body: JSON.stringify(this.getEquipped(equipment, "body")),
-        feet: JSON.stringify(this.getEquipped(equipment, "feet")),
-        left: JSON.stringify(this.getEquipped(equipment, "left")),
-        right: JSON.stringify(this.getEquipped(equipment, "right")),
-      };
+      obj.equipment = equipment;
 
-      data.totalGuts = guts;
-      data.totalWits = wits;
-      data.totalCharm = charm;
-      data.totalAttack = attack;
-      data.totalDefend = defend;
+      obj.totalGuts = guts;
+      obj.totalWits = wits;
+      obj.totalCharm = charm;
+      obj.totalAttack = attack;
+      obj.totalDefend = defend;
 
       json = {
         status: "ok",
-        data: data,
+        data: obj,
       };
     } else {
       json = {
@@ -179,127 +215,15 @@ class PlayerService {
     return json;
   }
 
-  async getInventory(id) {
-    const query =
-      "SELECT i.name, i.region, i.shop, i.guts AS itmGuts, i.wits AS itmWits, i.charm AS itmCharm, i.attack AS itmAttack, i.defend AS itmDefend, i.skill AS itmSkill, i.cost, i.func, i.equippable, i.max_enchants, i.lvl, i.is_silver, i.is_crystal, pi.id, pi.item, pi.qty, pi.equipped, pi.identified, pi.abilities, pi.guts, pi.wits, pi.charm, pi.attack, pi.defend, pi.skill, pi.times_enchanted, pi.in_storage, pi.lvl AS itmLvl FROM player_items pi INNER JOIN items i on pi.item = i.id WHERE pi.player = ? AND pi.equipped = 0";
-    const results = await this.app.db.query(query, [id]);
-
-    return Promise.all(
-      results.map((result) => {
-        const data = {
-          id: result.id,
-          itmId: result.item,
-          region: result.region,
-          shop: result.shop,
-          baseGuts: result.itmGuts,
-          baseWits: result.itmWits,
-          baseCharm: result.itmCharm,
-          baseAttack: result.itmAttack,
-          baseDefend: result.itmDefend,
-          baseSkill: result.itmSkill,
-          cost: result.cost,
-          func: result.func,
-          equippable: result.equippable,
-          maxEnchants: result.max_enchants,
-          isSilver: result.is_silver,
-          isCrystal: result.is_crystal,
-          qty: result.qty,
-          equipped: result.equipped,
-          identified: result.identified,
-          abilities: result.abilites,
-          guts: result.guts,
-          wits: result.wits,
-          charm: result.charm,
-          attack: result.attack,
-          defend: result.defend,
-          skill: result.skill,
-          timesEnchanted: result.times_enchanted,
-          inStorage: result.in_storage,
-          requiredLevel: result.lvl,
-          itemLevel: result.itmLevel,
-        };
-
-        return data;
-      })
-    );
-  }
-
-  async getEquipment(id) {
-    const query =
-      "SELECT i.name, i.region, i.shop, i.guts AS itmGuts, i.wits AS itmWits, i.charm AS itmCharm, i.attack AS itmAttack, i.defend AS itmDefend, i.skill AS itmSkill, i.cost, i.func, i.equippable, i.max_enchants, i.lvl, i.is_silver, i.is_crystal, pi.id, pi.item, pi.qty, pi.equipped, pi.identified, pi.abilities, pi.guts, pi.wits, pi.charm, pi.attack, pi.defend, pi.skill, pi.times_enchanted, pi.in_storage, pi.lvl AS itmLvl FROM player_items pi INNER JOIN items i on pi.item = i.id WHERE pi.player = ? AND pi.equipped = 1";
-    const results = await this.app.db.query(query, [id]);
-
-    return Promise.all(
-      results.map((result) => {
-        const data = {
-          id: result.id,
-          itmId: result.item,
-          region: result.region,
-          shop: result.shop,
-          baseGuts: result.itmGuts,
-          baseWits: result.itmWits,
-          baseCharm: result.itmCharm,
-          baseAttack: result.itmAttack,
-          baseDefend: result.itmDefend,
-          baseSkill: result.itmSkill,
-          cost: result.cost,
-          func: result.func,
-          equippable: result.equippable,
-          maxEnchants: result.max_enchants,
-          isSilver: result.is_silver,
-          isCrystal: result.is_crystal,
-          qty: result.qty,
-          equipped: result.equipped,
-          identified: result.identified,
-          abilities: result.abilites,
-          guts: result.guts,
-          wits: result.wits,
-          charm: result.charm,
-          attack: result.attack,
-          defend: result.defend,
-          skill: result.skill,
-          timesEnchanted: result.times_enchanted,
-          inStorage: result.in_storage,
-          requiredLevel: result.lvl,
-          itemLevel: result.itmLevel,
-        };
-
-        return data;
-      })
-    );
-  }
-
-  async addInventoryItem(item) {
-    const query =
-      "INSERT INTO player_items SET pi_item = ?, pi_player = ?, pi_qty = ?, pi_equipped = ?, pi_identified = ?, pi_abilities = ?, pi_guts = ?, pi_wits = ?, pi_charm = ?, pi_attack = ?, pi_defend = ?, pi_skill = ?, pi_times_enchanted = ?, pi_in_storage = ?";
-    const results = await this.app.db.query(query, [
-      item.id,
-      global.Player.owner,
-      item.qty,
-      item.equipped,
-      item.identified,
-      item.abilities,
-      item.guts,
-      item.wits,
-      item.charm,
-      item.attack,
-      item.defend,
-      item.skill,
-      item.timesEnchanted,
-      item.inStorage,
-    ]);
-    //return await this.getInventory(global.Player.owner);
-  }
-
   async update(data) {
     const query =
-      "UPDATE players SET region = ?, char_class = ?, background = ?, alliance = ?, effects = ?, guts = ?, wits = ?, charm = ?, max_guts = ?, max_wits = ?, max_charm = ?, attack = ?, defend = ?, skill = ?, skill_fighter = ?, skill_fighter_max = ?, skill_magic = ?, skill_magic_max = ?, skill_trade = ?, skill_trade_max = ?, level = ?, experience = ?, quests = ?, max_quests = ?, cash = ?, rank = ?, storage = ?, max_storage = ?, fame = ?, favor = ?, skilled = ?, place = ?, location = ? WHERE owner = ?";
+      "UPDATE players SET region = ?, class = ?, background = ?, alliance = ?, effects = ?, guts = ?, wits = ?, charm = ?, max_guts = ?, max_wits = ?, max_charm = ?, attack = ?, defend = ?, skill = ?, skill_fighter = ?, skill_fighter_max = ?, skill_magic = ?, skill_magic_max = ?, skill_trade = ?, skill_trade_max = ?, level = ?, experience = ?, quests = ?, max_quests = ?, cash = ?, rank = ?, storage = ?, max_storage = ?, fame = ?, favor = ?, skilled = ?, place = ?, location = ? WHERE owner = ?";
     return await this.app.db.query(query, [
       data.region,
-      data.charClass,
+      data.class,
       data.background,
       data.alliance,
-      data.affects,
+      data.effects,
       data.stats.guts,
       data.stats.wits,
       data.stats.charm,
@@ -309,12 +233,12 @@ class PlayerService {
       data.stats.attack,
       data.stats.defend,
       data.stats.skill,
-      data.skills.fighter.skill,
-      data.skills.fighter.max,
-      data.skills.magic.skill,
-      data.skills.magic.max,
-      data.skills.trade.skill,
-      data.skills.trade.max,
+      data.skill.fighter.skill,
+      data.skill.fighter.max,
+      data.skill.magic.skill,
+      data.skill.magic.max,
+      data.skill.trade.skill,
+      data.skill.trade.max,
       data.level,
       data.experience,
       data.quests,
